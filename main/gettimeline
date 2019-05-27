@@ -102,23 +102,57 @@ function setCalender(tweets) {
     } else if(text.match(/明後日/)) {
       day = new Date();
       day.setDate(day.getDate() + 2);
-    } else if(text.match(/(\d+)月/) && text.match(/(\d+)日/)) {
+    } else if(text.match(/(\d+)月/) && text.match(/(\d+)日/) || text.match(/([０-９]+)月/) && text.match(/([０-９]+)日/)) {
       month = text.match(/(\d+)月/);
       date = text.match(/(\d+)日/);
+      if(month == null) {
+        month = text.match(/([０-９]+)月/);
+        month = month[1].replace(/[０-９]/g, function (s) {
+          return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
+        month = Number(month);
+      }
+      if(date == null) {
+        date = text.match(/([０-９]+)日/);
+        date = date[1].replace(/[０-９]/g, function (s) {
+          return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
+        date = Number(date);
+      }
       day = new Date();
-      day.setMonth(month[1]);
-      day.setDate(date[1]);
-    } else if(text.match(/(\d+)\//) && text.match(/\/(\d+)/)) {
+      day.setMonth(month);
+      day.setDate(date);
+    } else if(text.match(/(\d+)\//) && text.match(/\/(\d+)/) || text.match(/([０-９]+)\//) && text.match(/\/([０-９]+)/)) {
       month = text.match(/(\d+)\//);
       date = text.match(/\/(\d+)/);
+      if(month == null) {
+        month = text.match(/([０-９]+)\//);
+        month = month[1].replace(/[０-９]/g, function (s) {
+          return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
+        month = Number(month);
+      }
+      if(date == null) {
+        date = text.match(/\/([０-９]+)/);
+        date = date[1].replace(/[０-９]/g, function (s) {
+          return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
+        date = Number(date);
+      }
       day = new Date();
-      day.setMonth(month[1]);
-      day.setDate(date[1]);
+      day.setMonth(Number(month[1]));
+      day.setDate(Number(date[1]));
     }
     
-    //日付があったら次は時間を設定
+    //日付があったら時間を設定
     if(text.match(/時から/) || text.match(/時～/) || text.match(/時/) && typeof day !== 'undefined') {
       tmpnum = text.match(/(\d+)時/);
+      if(tmpnum == null) {
+        tmpnum = text.match(/([０-９]+)時/);
+        tmpnum[1] = tmpnum[1].replace(/[０-９]/g, function (s) {
+          return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
+      }
       num = Number(tmpnum[1]);
       startTime = new Date();
       startTime.setDate(day.getDate());
@@ -132,6 +166,12 @@ function setCalender(tweets) {
       endTime.setSeconds(0);
     }else if(text.match(/:00/) || text.match(/:00～/) || text.match(/:30/) || text.match(/:30～/)&& typeof day !== 'undefined') {
       tmpnum = text.match(/(\d+):/);
+      if(tmpnum == null) {
+        tmpnum = text.match(/([０-９]+)：/);
+        tmpnum[1] = tmpnum[1].replace(/[０-９]/g, function (s) {
+          return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
+      }
       num = Number(tmpnum[1]);
       startTime = new Date();
       startTime.setDate(day.getDate());
